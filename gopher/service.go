@@ -49,3 +49,54 @@ func (gs *GopherService) ResolveJobs(p graphql.ResolveParams) (interface{}, erro
 	}
 	return jobs, nil
 }
+
+func (gs *GopherService) MutateJobs(p graphql.ResolveParams) (interface{}, error) {
+	employeeID, err := grabStringArgument("employeeid", p.Args, true)
+	if err != nil {
+		return nil, err
+	}
+
+	jobID, err := grabStringArgument("jobid", p.Args, true)
+	if err != nil {
+		return nil, err
+	}
+
+	start, err := grabStringArgument("start", p.Args, false)
+	if err != nil {
+		return nil, err
+	}
+
+	end, err := grabStringArgument("end", p.Args, false)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get the job
+	job, err := gs.jobs.GetJob(employeeID, jobID)
+	if err != nil {
+		return nil, err
+	}
+	if start != "" {
+		job.Start = start
+	}
+	if end != "" {
+		job.End = end
+	}
+	return gs.jobs.Update(job)
+}
+
+func grabStringArgument(k string, args map[string]interface{}, required bool) (string, error) {
+	// first check presense of arg
+	if value, ok := args[k]; ok {
+		// check string datatype
+		v, o := value.(string)
+		if !o {
+			return "", fmt.Errorf("%s is not a string value", k)
+		}
+		return v, nil
+	}
+	if required {
+		return "", fmt.Errorf("missing argument %s", k)
+	}
+	return "", nil
+}

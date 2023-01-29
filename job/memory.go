@@ -57,3 +57,32 @@ func (imr *InMemoryRepository) GetJobs(employeeID, companyName string) ([]Job, e
 	}
 	return nil, errors.New("no such employee exist")
 }
+
+func (imr *InMemoryRepository) GetJob(employeeID, jobID string) (Job, error) {
+	if jobs, ok := imr.jobs[employeeID]; ok {
+		for _, job := range jobs {
+
+			if job.ID == jobID {
+				return job, nil
+			}
+		}
+		return Job{}, errors.New("no such job exist")
+	}
+	return Job{}, errors.New("no such employee exist")
+}
+
+func (imr *InMemoryRepository) Update(j Job) (Job, error) {
+	imr.Lock()
+	defer imr.Unlock()
+
+	if jobs, ok := imr.jobs[j.EmployeeID]; ok {
+		for i, job := range jobs {
+
+			if job.ID == j.ID {
+				imr.jobs[j.EmployeeID][i] = j
+				return j, nil
+			}
+		}
+	}
+	return Job{}, errors.New("no such employee exist")
+}

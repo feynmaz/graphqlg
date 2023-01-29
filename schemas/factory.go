@@ -80,8 +80,10 @@ func GenerateSchema(gs *gopher.GopherService) (*graphql.Schema, error) {
 	}
 	rootQuery := graphql.ObjectConfig{Name: "RootQuery", Fields: fields}
 
+	rootMutation := generateRootMutation(gs)
 	schemaConfig := graphql.SchemaConfig{
 		Query: graphql.NewObject(rootQuery),
+		Mutation: rootMutation,
 	}
 
 	schema, err := graphql.NewSchema(schemaConfig)

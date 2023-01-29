@@ -1,5 +1,5 @@
 package job
 
 type Repository interface {
-	GetJobs(employeeID string) ([]Job, error)
+	GetJobs(employeeID, companyName string) ([]Job, error)
 }

@@ -31,12 +31,19 @@ func (gs *GopherService) ResolveGophers(p graphql.ResolveParams) (interface{}, e
 
 func (gs *GopherService) ResolveJobs(p graphql.ResolveParams) (interface{}, error) {
 	g, ok := p.Source.(Gopher)
-
 	if !ok {
 		return nil, errors.New("source was not a Gopher")
 	}
 
-	jobs, err := gs.jobs.GetJobs(g.ID)
+	company := ""
+	if value, ok := p.Args["company"]; ok {
+		company, ok = value.(string)
+		if !ok {
+			return nil, errors.New("id has to be a string")
+		}
+	}
+
+	jobs, err := gs.jobs.GetJobs(g.ID, company)
 	if err != nil {
 		return nil, err
 	}

@@ -45,9 +45,15 @@ func NewMemoryRepository() *InMemoryRepository {
 	}
 }
 
-func (imr *InMemoryRepository) GetJobs(employeeID string) ([]Job, error) {
+func (imr *InMemoryRepository) GetJobs(employeeID, companyName string) ([]Job, error) {
 	if jobs, ok := imr.jobs[employeeID]; ok {
-		return jobs, nil
+		filtered := make([]Job, 0)
+		for _, job := range jobs {
+			if (job.Company == companyName) || companyName == "" {
+				filtered = append(filtered, job)
+			}
+		}
+		return filtered, nil
 	}
 	return nil, errors.New("no such employee exist")
 }

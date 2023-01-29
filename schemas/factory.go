@@ -55,6 +55,11 @@ func generateGopherType(gs *gopher.GopherService) *graphql.Object {
 				Type:        graphql.NewList(jobType),
 				Description: "A list of all jobs the gopher had",
 				Resolve:     gs.ResolveJobs,
+				Args: graphql.FieldConfigArgument{
+					"company": &graphql.ArgumentConfig{
+						Type: graphql.String,
+					},
+				},
 			},
 		}})
 }
